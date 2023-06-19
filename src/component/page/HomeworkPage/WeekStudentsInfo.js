@@ -1,16 +1,15 @@
 import styled from "styled-components";
 
-const Row = styled.div`
+const StudentRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
   margin: 5px;
   border: 1px solid black;
 `;
 
 const Column = styled.p`
-  margin: 5px;
+  margin: 15px;
 `
 
 export const WeekStudentsInfo = (students) => {
@@ -25,14 +24,17 @@ export const WeekStudentsInfo = (students) => {
                     const studentInfo = students.students[handle];
 
                     return (
-                        <Row key={handle}>
+                        <StudentRow key={handle} >
                             <Column>{handle}</Column>
-                            {studentInfo && Object.keys(studentInfo).map(key => {
-                                if (key === "isSubmit" || (key === "length" && studentInfo[key] !== -1)) {
-                                    return (<Column key={key}> {key} : {studentInfo[key]} </Column>)
-                                }
-                            })}
-                        </Row>
+                            <Column key={"isSubmit"}> {studentInfo["isSubmit"]} </Column>
+                            {
+                                studentInfo["length"] !== -1 ?
+                                <Column key={"length"}> 과제물 길이 : {studentInfo["length"]} </Column>
+                                    :
+                                <div/>
+                            }
+                            <a href={studentInfo["url"]} target="_blank">바로 가기</a>
+                        </StudentRow>
                     )
                 })
             }
