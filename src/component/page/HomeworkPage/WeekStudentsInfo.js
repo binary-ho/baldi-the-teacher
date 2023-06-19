@@ -17,14 +17,19 @@ export const WeekStudentsInfo = (students) => {
     return (
         <div>
             {
-                students.students && Object.keys(students.students).map(handle => {
+                students.students && Object.keys(students.students)
+                    .sort((a, b) => {
+                        return students.students[b]["isSubmit"] === "제출함" ? 1 : -1;
+                    })
+                    .map(handle => {
                     const studentInfo = students.students[handle];
+
                     return (
                         <Row key={handle}>
                             <Column>{handle}</Column>
-                            {studentInfo && Object.keys(studentInfo).map(info => {
-                                if (info === "isSubmit" || (info === "length" && studentInfo[info] !== -1)) {
-                                    return (<Column key={info}> {info} : {studentInfo[info]} </Column>)
+                            {studentInfo && Object.keys(studentInfo).map(key => {
+                                if (key === "isSubmit" || (key === "length" && studentInfo[key] !== -1)) {
+                                    return (<Column key={key}> {key} : {studentInfo[key]} </Column>)
                                 }
                             })}
                         </Row>
