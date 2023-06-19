@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import {getStudents} from "../../../utils/StudentDataHelper";
-import {StudentRow} from "./StudentRow";
+import {WeekStudentsInfo} from "./WeekStudentsInfo";
 
 const Board = styled.div`
   background-color: whitesmoke;
@@ -24,7 +24,7 @@ export const HomeworkPage = (payload) => {
     const [students, setStudents] = useState();
 
     useEffect(() => {
-        getStudents(payload.studentsRawData).then(students => {
+        getStudents(payload).then(students => {
             setStudents(students);
         });
     }, []);
@@ -40,8 +40,8 @@ export const HomeworkPage = (payload) => {
                                 Object.keys(students[study]).map(week => {
                                     return (
                                         <WeekBox>
-                                            <h2>{week}</h2>
-                                            <StudentRow students={students[study][week]}/>
+                                            <h2>Week {week}</h2>
+                                            <WeekStudentsInfo students={students[study][week]}/>
                                         </WeekBox>
                                     );
                                 })

@@ -1,51 +1,35 @@
 import axios from "axios";
 
 const STUDY_INFO = {
-    WEB : {
-        repository : "2023-1-OC-Web-Study",
-    },
-    BE : {
-        repository : "2023-1-OC-BE-Study",
-    },
-    AI : {
-        repository : "2023-1-OC-AI-Study"
-    },
-    MOBILE : {
-        repository : "GDSC-OC-MOBILE-WIL",
-    },
+    WEB : "2023-1-OC-Web-Study",
+    BE : "2023-1-OC-BE-Study",
+    AI : "2023-1-OC-AI-Study",
+    MOBILE : "GDSC-OC-MOBILE-WIL"
 }
 
-export function getStudents(studentsRawData) {
-    return classifyStudents(studentsRawData).then(response => {
+export function getStudents(payload) {
+    return classifyStudents(payload).then(response => {
         return response;
     });
 }
 
-async function classifyStudents(studentsRawData) {
-    const students = initStudies();
+async function classifyStudents(payload) {
+    const { studentsRawData, startWeek, endWeek, study } = payload;
+    const students = initStudies(startWeek, endWeek, study);
 
     for (const student of studentsRawData) {
         if (student.github_repo_link) {
-            let push = false;
-            for (const key in STUDY_INFO) {
-                const study = STUDY_INFO[key];
-                if (!student.github_repo_link.includes(study.repository)) {
-                    continue;
+            if (!student.github_repo_link.includes(STUDY_INFO[study])) {
+                continue;
+            }
+            const homeworkData = await getHomeworkData(study, student, startWeek, endWeek);
+
+            Object.entries(homeworkData).forEach(([week, data]) => {
+                if (!students[study][week]) {
+                    students[study][week] = {};
                 }
-
-                push = true;
-                const homeworkData = await getHomeworkData(study, student);
-                Object.entries(homeworkData).forEach(([week, data]) => {
-                    if (!students[key + "Students"]["week " + week]) {
-                        students[key + "Students"]["week " + week] = {};
-                    }
-                    students[key + "Students"]["week " + week][student["discord_handle"]] = data;
-                });
-            }
-
-            if (!push) {
-                console.log("[ERROR] 파싱 실패 학생 (깃 링크를 확인하세요) : " + student.github_repo_link);
-            }
+                students[study][week][student["discord_handle"]] = data;
+            });
         } else {
             console.log("[ERROR] 파싱 실패 학생 : " + student);
         }
@@ -54,25 +38,23 @@ async function classifyStudents(studentsRawData) {
     return students;
 }
 
-const initStudies = () => {
+const initStudies = (startWeek, endWeek, study) => {
     const students = {};
 
-    for (const key in STUDY_INFO) {
-        students[key + "Students"] = {};
-        for (let i = 1; i <= 10; i++) {
-            students[key + "Students"]["week " + i] = {};
-        }
+    students[study] = {};
+    for (let i = startWeek; i <= endWeek; i++) {
+        students[study][i] = {};
     }
 
     return students;
 }
 
 
-async function getHomeworkData(study, student) {
-    const dataUrl = "https://raw.githubusercontent.com/" + student.github_handle + "/" + study.repository + "/main/Week";
+async function getHomeworkData(study, student, startWeek, endWeek) {
+    const dataUrl = "https://raw.githubusercontent.com/" + student.github_handle + "/" + STUDY_INFO[study] + "/main/Week";
     const homeworkData = {};
 
-    for (let week = 1; week <= 10; week++) {
+    for (let week = startWeek; week <= endWeek; week++) {
         homeworkData[week] = [];
 
         const weekUrl = dataUrl + week + "/WIL" + week + ".md";

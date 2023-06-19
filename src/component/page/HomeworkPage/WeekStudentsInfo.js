@@ -13,7 +13,7 @@ const Column = styled.p`
   margin: 5px;
 `
 
-export const StudentRow = (students) => {
+export const WeekStudentsInfo = (students) => {
     return (
         <div>
             {

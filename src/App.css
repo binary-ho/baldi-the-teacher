@@ -45,7 +45,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #002b36;
+  background-image: url("/public/baldis.png");
 }
 
 .snow {
