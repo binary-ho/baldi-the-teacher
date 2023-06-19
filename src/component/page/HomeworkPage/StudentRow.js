@@ -23,7 +23,7 @@ export const StudentRow = (students) => {
                         <Row key={handle}>
                             <Column>{handle}</Column>
                             {studentInfo && Object.keys(studentInfo).map(info => {
-                                if (info !== "url") {
+                                if (info === "isSubmit" || (info === "length" && studentInfo[info] !== -1)) {
                                     return (<Column key={info}> {info} : {studentInfo[info]} </Column>)
                                 }
                             })}
