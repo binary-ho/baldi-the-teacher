@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useEffect } from "react";
 import { makeSnowflake } from './snow';
+import { MainPage } from "./component/page/MainPage";
 
 function App() {
   useEffect(() => {
@@ -11,6 +12,7 @@ function App() {
 
   return (
     <div className="App">
+      <MainPage />
     </div>
   );
 }
